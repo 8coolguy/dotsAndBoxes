@@ -58,7 +58,12 @@ class Board:
             for box in rowboxes:
                 box.clickEdge(edgeChosen)
                 if box.isFilled():
-                    box.setOwnedPlayer = player
+                    box.setOwnedPlayer(player)
                     self.scores[player-1] += 1
-    def encode(self) -> str:
-        pass
+
+    def checkGameEnd(self):
+        for rowboxes in self.boxes:
+            for box in rowboxes:
+                if not box.isFilled():
+                    return False
+        return True
