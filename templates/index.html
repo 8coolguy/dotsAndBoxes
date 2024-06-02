@@ -6,7 +6,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="{{url_for('static', filename='index.js')}}"></script>
 	</head>
-	<body>
+	<body onload="createBoard(10,10)">
 		<h1> Template </h1>
+		<canvas id="canvas" height=1000 width =1000></canvas>
 	</body>
 </html>
