@@ -1,13 +1,15 @@
 console.log("Hello World");
 var canvas;
-var rows = 10
-var columns = 10;
+var rows = 4;
+var columns = 4;
 var dotPositions = [];
 var edgePositions = [];
 var selectedEdges = [];
 const r = 6;
 const spacing = 50;
-window.onload = createBoard(rows,columns);
+const x_b = 50;
+const y_b = 50;
+// window.onload = createBoard(rows,columns);
 
 var hoveredLine;
 
@@ -26,8 +28,8 @@ function createBoard(rows,columns){
 	
 	for(let i = 0; i < rows; i++){
 		for(let j = 0; j < columns; j++){
-			let x_pos = i*spacing;
-			let y_pos = j*spacing;
+			let x_pos = i*spacing+x_b;
+			let y_pos = j*spacing+y_b;
 			ctx.beginPath();
 			ctx.arc(x_pos, y_pos, r, 0, 2 * Math.PI);
 			ctx.fill();
@@ -121,21 +123,77 @@ function drawCircles(){
 	ctx.strokeStyle = "black";
 	for(let i = 0; i < rows; i++){
 		for(let j = 0; j < columns; j++){
-			let x_pos = i*spacing;
-			let y_pos = j*spacing;
+			let x_pos = i*spacing + x_b;
+			let y_pos = j*spacing + y_b;
 			ctx.beginPath();
 			ctx.arc(x_pos, y_pos, r, 0, 2 * Math.PI);
+			ctx.fillStyle = "black";
 			ctx.fill();
+
 			ctx.stroke();
 		}
 	}
 }
+function drawRectangle(x,y,color){
+	const ctx = canvas.getContext("2d");
+	ctx.beginPath();
+	ctx.fillStyle = color;
+	ctx.fillRect(x, y, spacing, spacing);
+}
 function clickEdge(e){
 	var x  = e.offsetX;
 	var y = e.offsetY;
-	console.log("fsdjfksdj");
 	if(hoveredLine == -1) return;
 	selectedEdges[hoveredLine] = 1;
+	x1 = edgePositions[hoveredLine][0];
+	y1 = edgePositions[hoveredLine][1];
+	x2 = edgePositions[hoveredLine][2];
+	y2 = edgePositions[hoveredLine][3];
+	let box1 = [];
+	let box2 = [];
+	for(let i = 0; i < edgePositions.length; i++){
+		if(edgePositions[i]==hoveredLine) continue;
+		//horizontal or vertical edge
+		if(x1 == x2){
+			if(edgePositions[i][0] == x1 - spacing && edgePositions[i][1] == y1 && edgePositions[i][2] == x1 && edgePositions[i][3] == y1) box1.push(i);
+			if(edgePositions[i][0] == x1 - spacing && edgePositions[i][1] == y1 && edgePositions[i][2] == x1 - spacing && edgePositions[i][3] == y2) box1.push(i);
+			if(edgePositions[i][0] == x1 - spacing && edgePositions[i][1] == y2 && edgePositions[i][2] == x1 && edgePositions[i][3] == y2) box1.push(i);
+
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 && edgePositions[i][2] == x1 + spacing && edgePositions[i][3] == y1) box2.push(i);
+			if(edgePositions[i][0] == x1 + spacing && edgePositions[i][1] == y1 && edgePositions[i][2] == x1 + spacing && edgePositions[i][3] == y2) box2.push(i);
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y2 && edgePositions[i][2] == x1 + spacing && edgePositions[i][3] == y2) box2.push(i);
+		}else{
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 - spacing && edgePositions[i][2] == x1 && edgePositions[i][3] == y1) box1.push(i);
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 - spacing && edgePositions[i][2] == x2 && edgePositions[i][3] == y2 - spacing) box1.push(i);
+			if(edgePositions[i][0] == x2 && edgePositions[i][1] == y2 - spacing && edgePositions[i][2] == x2 && edgePositions[i][3] == y2) box1.push(i);
+
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 && edgePositions[i][2] == x1 && edgePositions[i][3] == y1 + spacing) box2.push(i);
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 +spacing && edgePositions[i][2] == x2 && edgePositions[i][3] == y2 + spacing) box2.push(i);
+			if(edgePositions[i][0] == x2 && edgePositions[i][1] == y2 && edgePositions[i][2] == x2 && edgePositions[i][3] == y2 + spacing) box2.push(i);
+		}
+
+	} 
+	let res = true;
+
+	box1.forEach(element => {
+		if(selectedEdges[element] != 1) res =false;
+		x1 = Math.min(x1,edgePositions[element][0],edgePositions[element][2]);
+		y1 = Math.min(y1,edgePositions[element][1],edgePositions[element][3]);
+	});
+	if(res && box1.length==3){
+		drawRectangle(x1,y1,"blue")
+		box1.forEach(element => drawSingleLine(edgePositions[element][0],edgePositions[element][1],edgePositions[element][2],edgePositions[element][3], 'green'));
+	}
+		res = true;
+	box2.forEach(element => {
+		if(selectedEdges[element] != 1) res = false;
+		x2 = Math.min(x2,edgePositions[element][0],edgePositions[element][2]);
+		y2 = Math.min(y2,edgePositions[element][1],edgePositions[element][3]);
+	});
+	if(res && box2.length==3){
+		drawRectangle(x2,y2,"green")
+		box2.forEach(element => drawSingleLine(edgePositions[element][0],edgePositions[element][1],edgePositions[element][2],edgePositions[element][3], 'green'));
+	}
 	drawSingleLine(edgePositions[hoveredLine][0],edgePositions[hoveredLine][1],edgePositions[hoveredLine][2],edgePositions[hoveredLine][3], 'green');
 	drawCircles();
 }
