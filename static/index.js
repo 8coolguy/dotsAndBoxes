@@ -1,7 +1,8 @@
 console.log("Hello World");
+var socket;
 var canvas;
-var rows = 4;
-var columns = 4;
+var rows = 10;
+var columns = 10;
 var dotPositions = [];
 var edgePositions = [];
 var selectedEdges = [];
@@ -9,9 +10,19 @@ const r = 6;
 const spacing = 50;
 const x_b = 50;
 const y_b = 50;
-// window.onload = createBoard(rows,columns);
-
 var hoveredLine;
+window.onload=connectSocket;
+
+
+function connectSocket(){
+    socket = io({autoconnect:false});
+	socket.connect();
+	socket.on("connect",()=> console.log("Connected"));
+	socket.on("move", (res)=> console.log(res))
+	socket.on("moveAccept",(res)=>selectEdge(res.lineId,res.color));
+	
+	createBoard(rows,columns);
+}
 
 /*
  * Here our code for the rendering of the board will go. We will also connect to a socket over here to reliably pass inforamtion.
@@ -141,9 +152,11 @@ function drawRectangle(x,y,color){
 	ctx.fillRect(x, y, spacing, spacing);
 }
 function clickEdge(e){
-	var x  = e.offsetX;
-	var y = e.offsetY;
 	if(hoveredLine == -1) return;
+	console.log(hoveredLine);
+	socket.emit("move",hoveredLine);
+}
+function selectEdge(hoveredLine,color){
 	selectedEdges[hoveredLine] = 1;
 	x1 = edgePositions[hoveredLine][0];
 	y1 = edgePositions[hoveredLine][1];
@@ -168,30 +181,31 @@ function clickEdge(e){
 			if(edgePositions[i][0] == x2 && edgePositions[i][1] == y2 - spacing && edgePositions[i][2] == x2 && edgePositions[i][3] == y2) box1.push(i);
 
 			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 && edgePositions[i][2] == x1 && edgePositions[i][3] == y1 + spacing) box2.push(i);
-			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 +spacing && edgePositions[i][2] == x2 && edgePositions[i][3] == y2 + spacing) box2.push(i);
+			if(edgePositions[i][0] == x1 && edgePositions[i][1] == y1 + spacing && edgePositions[i][2] == x2 && edgePositions[i][3] == y2 + spacing) box2.push(i);
 			if(edgePositions[i][0] == x2 && edgePositions[i][1] == y2 && edgePositions[i][2] == x2 && edgePositions[i][3] == y2 + spacing) box2.push(i);
 		}
 
 	} 
 	let res = true;
-
+	//fill box1
 	box1.forEach(element => {
-		if(selectedEdges[element] != 1) res =false;
+		if(selectedEdges[element] != 1) res = false;
 		x1 = Math.min(x1,edgePositions[element][0],edgePositions[element][2]);
 		y1 = Math.min(y1,edgePositions[element][1],edgePositions[element][3]);
 	});
 	if(res && box1.length==3){
-		drawRectangle(x1,y1,"blue")
+		drawRectangle(x1,y1,color)
 		box1.forEach(element => drawSingleLine(edgePositions[element][0],edgePositions[element][1],edgePositions[element][2],edgePositions[element][3], 'green'));
 	}
-		res = true;
+	//fill box2
+	res = true;
 	box2.forEach(element => {
 		if(selectedEdges[element] != 1) res = false;
 		x2 = Math.min(x2,edgePositions[element][0],edgePositions[element][2]);
 		y2 = Math.min(y2,edgePositions[element][1],edgePositions[element][3]);
 	});
 	if(res && box2.length==3){
-		drawRectangle(x2,y2,"green")
+		drawRectangle(x2,y2,color)
 		box2.forEach(element => drawSingleLine(edgePositions[element][0],edgePositions[element][1],edgePositions[element][2],edgePositions[element][3], 'green'));
 	}
 	drawSingleLine(edgePositions[hoveredLine][0],edgePositions[hoveredLine][1],edgePositions[hoveredLine][2],edgePositions[hoveredLine][3], 'green');

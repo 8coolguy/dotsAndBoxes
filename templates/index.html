@@ -3,10 +3,11 @@
 	<head>
 		<title>DotsAndBoxes</title>
 		<meta charset="UTF-8">
+		<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="{{url_for('static', filename='index.js')}}"></script>
 	</head>
-	<body onload="createBoard(4,4)">
+	<body>
 		<h1> Template </h1>
 		<canvas id="canvas" height=1000 width =1000></canvas>
 	</body>
