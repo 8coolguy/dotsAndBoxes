@@ -21,7 +21,7 @@ def handleConnection():
 @socketio.on("init")
 def handleInit(rows,columns,numPlayers):
     # join a room with all the players the id has to be unique to the room
-    room_id = int(request.referrer.split("/")[-1])
+    room_id = str(request.referrer.split("/")[-1])
     print("Init",room_id)
     join_room(room_id)
     session["board"] = Board(rows,columns,numPlayers)
@@ -56,14 +56,14 @@ def getEdge(lineId,rows,cols):
 @socketio.on('move')
 def handleMove(lineId):
     app.config['i']+=1
-    room_id = int(request.referrer.split("/")[-1])
-    
+    room_id = str(request.referrer.split("/")[-1])
+
     emit("move",{"lineId":lineId,"color":["orange","purple"][app.config['i']%session["board"].numPlayers]},to=room_id)
 #
 # Page Routes
 #
 # Game
-@app.route("/<int:room_id>",methods=["GET"])
+@app.route("/<string:room_id>",methods=["GET"])
 def index(room_id):
     return render_template("index.html")
 #

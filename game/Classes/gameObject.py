@@ -50,6 +50,7 @@ class Board:
         self.rows = rows
         self.columns = columns
         self.scores = [0 for i in range(numPlayers)]
+        self.numPlayers = numPlayers
         #self.arrayofdots = [[Dot(i,j) for j in range(columns)] for i in range(rows)]
         self.boxes = [[Box for j in range(columns-1)] for i in range(rows-1)]
         for i in range(rows-1):
