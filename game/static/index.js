@@ -1,8 +1,8 @@
 console.log("Hello World");
 var socket;
 var canvas;
-var rows = 10;
-var columns = 10;
+var rows = 3;
+var columns = 3;
 var dotPositions = [];
 var edgePositions = [];
 var selectedEdges = [];
@@ -16,10 +16,9 @@ window.onload=connectSocket;
 
 function connectSocket(){
     socket = io({autoconnect:false});
-	socket.connect();
+	socket.emit("init",rows,columns,2);
 	socket.on("connect",()=> console.log("Connected"));
-	socket.on("move", (res)=> console.log(res))
-	socket.on("moveAccept",(res)=>selectEdge(res.lineId,res.color));
+	socket.on("move",(res)=>{selectEdge(res.lineId,res.color);socket.emit("update",res.lineId)});
 	
 	createBoard(rows,columns);
 }
@@ -153,7 +152,6 @@ function drawRectangle(x,y,color){
 }
 function clickEdge(e){
 	if(hoveredLine == -1) return;
-	console.log(hoveredLine);
 	socket.emit("move",hoveredLine);
 }
 function selectEdge(hoveredLine,color){

@@ -1,3 +1,4 @@
 *.pyc
 my_venv
-flask_session
+*/flask_session
+*.env

@@ -3,6 +3,8 @@ class Dot:
     def __init__(self, row, col) -> None:
         self.row = row
         self.col = col
+    def __eq__(self, otherDot: object) -> bool:
+        return  self.row == otherDot.row and self.col == otherDot.col
 class Edge:
     def __init__(self, dot1: Dot, dot2: Dot) -> None:
         self.dot1 = dot1
@@ -22,18 +24,24 @@ class Box:
         self.bottomedge = edge4
         self.ownedPlayer = -1
     def isFilled(self):
-        return self.edge1.isClicked() and self.edge2.isClicked() and self.edge3.isClicked() and self.edge4.isClicked()
+        return self.topedge.isClicked() and self.leftedge.isClicked() and self.rightedge.isClicked() and self.bottomedge.isClicked()
     def setOwnedPlayer(self, player):
         self.ownedPlayer = player
     def clickEdge(self, edge: Edge):
+        temp = False
         if self.topedge == edge:
+            temp = self.topedge.clicked
             self.topedge.clicked = True
         elif self.leftedge == edge:
+            temp = self.leftedge.clicked
             self.leftedge.clicked = True
         elif self.rightedge == edge:
+            temp = self.rightedge.clicked
             self.rightedge.clicked = True
         elif self.bottomedge == edge:
+            temp = self.bottomedge.clicked
             self.bottomedge.clicked = True
+        return temp
 
             
 
@@ -54,11 +62,11 @@ class Board:
     
     def move(self, player, row1, col1, row2, col2):
         edgeChosen = Edge(Dot(row1, col1), Dot(row2, col2))
-        for rowboxes in self.boxes:
-            for box in rowboxes:
-                box.clickEdge(edgeChosen)
-                if box.isFilled():
-                    box.setOwnedPlayer(player)
+        for r,rowboxes in enumerate(self.boxes):
+            for c,box in enumerate(rowboxes):
+                alreadyClicked = self.boxes[r][c].clickEdge(edgeChosen)
+                if not alreadyClicked and self.boxes[r][c].isFilled() and self.boxes[r][c].ownedPlayer == -1:
+                    self.boxes[r][c].setOwnedPlayer(player)
                     self.scores[player-1] += 1
 
     def checkGameEnd(self):
