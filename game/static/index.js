@@ -1,8 +1,9 @@
 console.log("Hello World");
 var socket;
 var canvas;
-var rows = 3;
-var columns = 3;
+var rows;
+var columns;
+var numPlayers;
 var dotPositions = [];
 var edgePositions = [];
 var selectedEdges = [];
@@ -12,15 +13,26 @@ const x_b = 50;
 const y_b = 50;
 var hoveredLine;
 window.onload=connectSocket;
+window.addEventListener("beforeunload", function (e) {
+    var confirmationMessage = "\o/";
+    (e || window.event).returnValue = confirmationMessage;
+    socket.emit("disconnect");
+    return confirmationMessage;                            //Webkit, Safari, Chrome
+  });
 
 
 function connectSocket(){
     socket = io({autoconnect:false});
-	socket.emit("init",rows,columns,2);
-	socket.on("connect",()=> console.log("Connected"));
-	socket.on("move",(res)=>{selectEdge(res.lineId,res.color);socket.emit("update",res.lineId)});
+	socket.on("connect",(res)=>{
+		rows=res.r;
+		columns=res.c;
+		numPlayers=res.n;
+		createBoard(rows,columns);
+		socket.emit("init",rows,columns,numPlayers);
+	});
+	socket.on("move", (res)=>{selectEdge(res.lineId,res.color);socket.emit("update",res.lineId)});
+	socket.on("redirect", (destination) => {window.location.href = destination;});
 	
-	createBoard(rows,columns);
 }
 
 /*

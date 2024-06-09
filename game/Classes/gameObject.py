@@ -51,7 +51,7 @@ class Board:
         self.columns = columns
         self.scores = [0 for i in range(numPlayers)]
         self.numPlayers = numPlayers
-        #self.arrayofdots = [[Dot(i,j) for j in range(columns)] for i in range(rows)]
+        self.nextPlayer = 0
         self.boxes = [[Box for j in range(columns-1)] for i in range(rows-1)]
         for i in range(rows-1):
             for j in range(columns-1):
@@ -63,12 +63,21 @@ class Board:
     
     def move(self, player, row1, col1, row2, col2):
         edgeChosen = Edge(Dot(row1, col1), Dot(row2, col2))
+        # only update when it is a new update to the board
+        scored = False
+        #find all the boxes that have the chosen edge
         for r,rowboxes in enumerate(self.boxes):
             for c,box in enumerate(rowboxes):
+                # update the edge and change the score if it is a new move
                 alreadyClicked = self.boxes[r][c].clickEdge(edgeChosen)
+                if alreadyClicked: continue
                 if not alreadyClicked and self.boxes[r][c].isFilled() and self.boxes[r][c].ownedPlayer == -1:
                     self.boxes[r][c].setOwnedPlayer(player)
                     self.scores[player-1] += 1
+                    scored = True
+        #update the next eligible player
+        if not scored:
+            self.nextPlayer = (self.nextPlayer + 1) % self.numPlayers
 
     def checkGameEnd(self):
         for rowboxes in self.boxes:
