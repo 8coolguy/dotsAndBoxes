@@ -1,17 +1,41 @@
 bidict==0.23.1
-blinker @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_006wdibaig/croot/blinker_1696539075381/work
+blinker
 cachelib==0.13.0
-click @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_f27dk3zwrb/croot/click_1698129816363/work
-Flask @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_0bn8z9nupr/croot/flask_1716545880759/work
+certifi==2024.6.2
+cffi==1.16.0
+charset-normalizer==3.3.2
+click
+cryptography==42.0.8
+Flask
 Flask-Session==0.8.0
 Flask-SocketIO==5.3.6
+gcloud==0.18.3
+googleapis-common-protos==1.63.1
 h11==0.14.0
-itsdangerous @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_f7bt4rtvu8/croot/itsdangerous_1716533350521/work
-Jinja2 @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_524l12w9yv/croot/jinja2_1706733629737/work
-MarkupSafe @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_3a_cffw83x/croot/markupsafe_1704205995714/work
+httplib2==0.22.0
+idna==3.7
+itsdangerous
+Jinja2
+jwcrypto==1.5.6
+MarkupSafe
 msgspec==0.18.6
+oauth2client==4.1.3
+protobuf==5.27.1
+pyasn1==0.6.0
+pyasn1_modules==0.4.0
+pycparser==2.22
+pycryptodome==3.20.0
+pyparsing==3.1.2
+Pyrebase4==4.8.0
 python-engineio==4.9.1
+python-jwt==4.1.0
 python-socketio==5.11.2
+requests==2.32.3
+requests-toolbelt==0.10.1
+rsa==4.9
 simple-websocket==1.0.0
-Werkzeug @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_53yi9ymayw/croot/werkzeug_1716533323400/work
+six==1.16.0
+typing_extensions==4.12.2
+urllib3==1.26.18
+Werkzeug
 wsproto==1.2.0

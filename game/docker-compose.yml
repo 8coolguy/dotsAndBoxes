@@ -1,0 +1,11 @@
+version: "3.8"
+services :
+  game:
+    image : dots-box:1.0
+    environment:
+      databaseURL: ${databaseURL}
+      APIKEY: ${APIKEY}
+      AUTH: ${AUTH}
+      storageBucket: ${storageBucket}
+    ports: 
+      - 5050:5000
