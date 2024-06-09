@@ -21,10 +21,8 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def handleConnection():
     room_id = str(request.referrer.split("/")[-1])
     if "?" in room_id: return
-    print(room_id)
     setting = db.child("rooms").child(room_id).child("settings").get().val()
     if not setting or setting == 0: setting = DEFAULT
-    print(setting)
     emit("connect",{"r":setting//100 % 10,"c":setting//10 % 10,"n":setting % 10})
     print("User Connected")
 #
@@ -34,6 +32,7 @@ def handleConnection():
     print("User Disconnected")
     if session.get("uid",False):
         db.child("players").child(session["uid"]).remove()
+        db.child("queue").child(session["uid"]).remove()
         return
     room_id = str(request.referrer.split("/")[-1])
     if session.get("playerId",False):
@@ -50,13 +49,14 @@ def handleConnection():
 @socketio.on("init")
 def handleInit(rows,columns,numPlayers):
     # join a room with all the players the id has to be unique to the room
-
     nextNum = 0
     room_id = str(request.referrer.split("/")[-1])
     players = db.child("rooms").child(room_id).child("players").get().val()
     if players: nextNum = max(players) + 1
     if nextNum == numPlayers: 
         return emit("redirect","/")
+    emit("player", "Player " + str(nextNum + 1))
+    emit("turn", "Player 1\'s turn.")
     player_id = player_num = nextNum
     db.child("rooms").child(room_id).child("players").child(player_id).set(player_num)
     join_room(room_id)    
@@ -69,10 +69,20 @@ def handleInit(rows,columns,numPlayers):
 def updateBoard(lineId):
     #check if the state is started
     pos = getEdge(lineId,session["board"].rows,session["board"].columns)
-    session["board"].move(session["playerId"], pos[0], pos[1], pos[2], pos[3])
+    session["board"].move(session["board"].nextPlayer, pos[0], pos[1], pos[2], pos[3])
+    emit("turn", "Player " + str(session["board"].nextPlayer + 1) +"\'s turn.")
     if session["board"].checkGameEnd():
-        #notify all the players the game is over
-        pass
+        res=""
+        scores = session["board"].scores
+        winner = scores.index(max(scores)) + 1
+        if not max(scores) in scores[winner:]:
+            res +="Player " + str(winner) + " wins\n"
+        else:
+            res+="Tie\n"
+        for i,score in enumerate(scores):
+            res+=f'Player {i+1} scored {score} points.\n'
+        emit("end",res)
+        emit("redirect","/")
 
 def getEdge(lineId,rows,cols):
     count = 0
@@ -96,7 +106,7 @@ def handleMove(lineId):
     # check whether the correct player moved
     if player != session["board"].nextPlayer: return
     room_id = str(request.referrer.split("/")[-1])
-    emit("move",{"lineId":lineId,"color":["orange","purple","green","blue","yellow"][session["board"].nextPlayer]},to=room_id)
+    emit("move",{"lineId":lineId,"color":["orange","purple","green","blue","yellow","red","pink","black","gray"][session["board"].nextPlayer]},to=room_id)
 
 #
 # Add to the queue
@@ -105,12 +115,21 @@ def handleMove(lineId):
 @socketio.on('queue')
 def pushQueue(settings):
     #check queue to see if the correct count of players exist yet
+    db.child("queue").child(session["uid"]).remove()
     queue = db.child("queue").get().val()
-    if not queue: return db.child("queue").child(session["uid"]).set(settings)
+    anySetting = (settings == 0)
+    if not queue: 
+        emit("status","Queued",to=session["uid"])
+        return db.child("queue").child(session["uid"]).set(settings)
+    if anySetting: 
+        settings = DEFAULT
+        for player in queue.keys(): 
+                if queue[player] != 0:
+                    settings = queue[player]
     numPlayers = settings % 10
     buffer = []
     for player in queue.keys():
-        if queue[player] == 0 or queue[player] == settings and len(buffer) < numPlayers - 1:
+        if (queue[player] == 0 or (queue[player] == settings or anySetting)) and len(buffer) < numPlayers - 1:
             if db.child("players").child(player).get().val():
                 buffer.append(player)
             else: db.child("queue").child(player).remove()
@@ -121,7 +140,9 @@ def pushQueue(settings):
             db.child("queue").remove(player)
         emit("redirect","/game/"+room_id)
     else:
+        if anySetting: settings = 0
         db.child("queue").child(session["uid"]).set(settings)
+        emit("status","Queued",to=session["uid"])
     
 #
 # Page Routes

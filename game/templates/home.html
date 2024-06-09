@@ -1,4 +1,4 @@
-!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>DotsAndBoxes</title>
@@ -6,14 +6,49 @@
 		<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="{{url_for('static', filename='match.js')}}"></script>
-		</head>
+		<link href="{{url_for('static', filename='output.css')}}"  rel="stylesheet"></link>		
+	</head>
+	
 	<body>
-		<h1> Home Page where users look for a game here. </h1>
-		<div>
-			<input type="range" min="3" max="9" value="3" class="slider" id="r-select">
-			<input type="range" min="3" max="9" value="3" class="slider" id="c-select">
-			<input type="range" min="2" max="9" value="2" class="slider" id="n-select">
-			<button onclick=findGame()>Look for Game</button>
+		{% include 'navbar.html' %}
+		<div class = "flex items-start justify-center h-screen">
+			<div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+				<h2 class="text-xl font-extralight font-bold mb-4">Settings</h2>
+				<div class="mb-4">
+					<label class="block font-extralight mb-2">Rows</label>
+					<input type="range" min="3" max="9" value="3" class="w-full" id="r-select" oninput="update(this.value,'rows')">
+					<div class="flex justify-between font-extralight">
+						<span id="rows">3</span>
+						<span>9</span>
+					</div>
+				</div>
+				<div class="mb-4">
+					<label class="block font-extralight mb-2">Columns</label>
+					<input type="range" min="3" max="9" value="3" class="w-full" id="c-select" oninput="update(this.value,'cols')">
+					<div class="flex justify-between font-extralight">
+						<span id="cols">3</span>
+						<span>9</span>
+					</div>
+				</div>
+				<div class="mb-4">
+					<label class="block font-extralight mb-2">Players</label>
+					<input type="range" min="2" max="9" value="2" class="w-full" id="n-select" oninput="update(this.value,'players')">
+					<div class="flex justify-between font-extralight">
+						<span id="players">2</span>
+						<span>9</span>
+					</div>
+				</div>
+				<button onclick=findGame() class="bg-blue-500 hover:bg-blue-400 text-white font-extralight py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded">
+					Look For A Game
+				</button>
+				<button onclick=quickGame() class="bg-green-500 hover:bg-green-400 text-white font-extralight py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">
+					Quick Game
+				</button>
+				<p class ="font-extralight text-xl">Status: <p class ="font-extralight" id="status">None</p></p>
+				
+			</div>
+			
+			
 		</div>
 	</body>
 </html>

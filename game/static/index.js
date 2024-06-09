@@ -9,8 +9,8 @@ var edgePositions = [];
 var selectedEdges = [];
 const r = 6;
 const spacing = 50;
-const x_b = 50;
-const y_b = 50;
+var x_b = 10;
+var y_b = 25;
 var hoveredLine;
 window.onload=connectSocket;
 window.addEventListener("beforeunload", function (e) {
@@ -24,14 +24,17 @@ window.addEventListener("beforeunload", function (e) {
 function connectSocket(){
     socket = io({autoconnect:false});
 	socket.on("connect",(res)=>{
-		rows=res.r;
-		columns=res.c;
+		rows=res.c;
+		columns=res.r;
 		numPlayers=res.n;
 		createBoard(rows,columns);
 		socket.emit("init",rows,columns,numPlayers);
 	});
 	socket.on("move", (res)=>{selectEdge(res.lineId,res.color);socket.emit("update",res.lineId)});
 	socket.on("redirect", (destination) => {window.location.href = destination;});
+	socket.on("player", (text) => document.getElementById("player").innerHTML = text);
+	socket.on("turn", (text) => document.getElementById("turn").innerHTML = text);
+	socket.on("end", (text) => alert(text));
 	
 }
 
@@ -39,6 +42,8 @@ function connectSocket(){
  * Here our code for the rendering of the board will go. We will also connect to a socket over here to reliably pass inforamtion.
  */
 function createBoard(rows,columns){
+	x_b = (10 - rows) * 12;
+	y_b = (10 - columns) * 12;
 	canvas = document.getElementById("canvas");
 	canvas.onmousemove = hoverEffect;
 	canvas.onclick = clickEdge;

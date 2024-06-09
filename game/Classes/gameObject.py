@@ -73,7 +73,7 @@ class Board:
                 if alreadyClicked: continue
                 if not alreadyClicked and self.boxes[r][c].isFilled() and self.boxes[r][c].ownedPlayer == -1:
                     self.boxes[r][c].setOwnedPlayer(player)
-                    self.scores[player-1] += 1
+                    self.scores[player] += 1
                     scored = True
         #update the next eligible player
         if not scored:

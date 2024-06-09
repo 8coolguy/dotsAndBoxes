@@ -1,4 +1,4 @@
-!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<title>DotsAndBoxes</title>
@@ -6,9 +6,17 @@
 		<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script src="{{url_for('static', filename='index.js')}}"></script>
+		<link href="{{url_for('static', filename='output.css')}}"  rel="stylesheet"></link>			
 	</head>
 	<body>
-		<h1> Dots And Boxes </h1>
-		<canvas id="canvas" height=1000 width =1000></canvas>
+		{% include 'navbar.html' %}
+		<div class = "flex items-start justify-center h-screen">
+			
+			<div class="bg-white rounded-lg shadow-lg p-4 w-full max-w-md">
+				<p class="font-extralight text-bold text-xl" id="player">Player 3</p>
+				<p class="font-extralight" id="turn">Player 5's Turn</p>
+				<canvas	canvas id="canvas" height=500 width = 500></canvas>
+			</div>
+		</div>
 	</body>
 </html>
