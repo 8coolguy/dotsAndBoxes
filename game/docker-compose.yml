@@ -3,9 +3,9 @@ services :
   game:
     image : dots-box:1.0
     environment:
-      databaseURL: ${DB}
+      DB: ${DB}
       APIKEY: ${APIKEY}
       AUTH: ${AUTH}
-      storageBucket: ${STORE}
+      STORE: ${STORE}
     ports: 
       - 5050:5000
