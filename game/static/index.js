@@ -169,6 +169,7 @@ function drawRectangle(x,y,color){
 }
 function clickEdge(e){
 	if(hoveredLine == -1) return;
+	if(selectedEdges[hoveredLine] == 1) return;
 	socket.emit("move",hoveredLine);
 }
 function selectEdge(hoveredLine,color){
