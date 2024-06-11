@@ -1,6 +1,19 @@
 # Dots and Boxes Multiplayer
 
-TODO:
-1. Dots and Boxes implemented within index.js.
-2. Multiplayer communicates through sockets in index.js flask server.
-3. Matchmaking flask server.
+How to build project from source:   
+
+```
+cd game
+pip install -r requirements.txt
+```
+After installiing the dependencies, you need to create firebase project. Here at https://firebase.google.com/.  Once you have your keys. Execute these commands to set environment variables in your terminal.   
+```
+export APIKEY="<key>"
+export DB="<db url>"
+export AUTH="< auth url>"
+export STORE="<storage url>"
+```
+Now, the project is ready to run with:
+```
+flask run
+```
