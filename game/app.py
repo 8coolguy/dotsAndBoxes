@@ -37,6 +37,8 @@ def handleConnection():
     room_id = str(request.referrer.split("/")[-1])
     if session.get("playerId",False):
         db.child("rooms").child(room_id).child("players").remove()
+    emit("end","Player Disconnect",to=room_id)
+    emit("redirect","/",to=room_id)
 #
 # Handle Auto Id 
 @socketio.on("autoid")
