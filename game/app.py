@@ -108,6 +108,9 @@ def handleMove(lineId):
     # check whether the correct player moved
     if player != session["board"].nextPlayer: return
     room_id = str(request.referrer.split("/")[-1])
+    if max(db.child("rooms").child(room_id).child("players").get().val()) + 1 != session["board"].numPlayers:
+        emit("end", "Players have not arrived.")
+        return
     emit("move",{"lineId":lineId,"color":["orange","purple","green","blue","yellow","red","pink","black","gray"][session["board"].nextPlayer]},to=room_id)
 
 #
